@@ -33,3 +33,8 @@ jobs:
           file: ./docker/Dockerfile.backend
           push: true
           tags: mubumubu/todo-app-backend:${{ github.sha }}
+      - name: Deploy to the VM 
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key 
+          chmod 700 /home/runner/ssh_key 
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key root@168.144.16.165 -t "docker stop user_backend1 && docker run --name user_backend1 -d -p 8080:8080 mubumubu/todo-app-backend:${{ github.sha }}"
